@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>tutu · Pages</title>
+  <style>
+    :root { color-scheme: light dark; }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(1200px 600px at 10% -10%, #7dd3fc55, transparent),
+        radial-gradient(900px 500px at 100% 0%, #c4b5fd55, transparent),
+        #0b1020;
+      color: #e8eefc;
+    }
+    main {
+      width: min(560px, 92vw);
+      padding: 2rem 1.75rem;
+      border-radius: 1.25rem;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.12);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 20px 50px rgba(0,0,0,0.35);
+    }
+    h1 { margin: 0 0 0.5rem; font-size: 1.75rem; letter-spacing: -0.02em; }
+    p { margin: 0; line-height: 1.6; color: #b7c3df; }
+    .badge {
+      display: inline-block;
+      margin-bottom: 1rem;
+      padding: 0.25rem 0.65rem;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      background: #38bdf833;
+      color: #bae6fd;
+      border: 1px solid #7dd3fc55;
+    }
+    a { color: #7dd3fc; }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="badge">GitHub Pages</div>
+    <h1>你好，这里是 tutu 的站点</h1>
+    <p>由 <a href="https://github.com/vlifeng/vlifeng.github.io">vlifeng/vlifeng.github.io</a> 发布。站点已上线。</p>
+  </main>
+</body>
+</html>
