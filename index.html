@@ -289,6 +289,19 @@
     let lastPrice = null;
     let inFlight = false;
 
+    function isDesktopBrowser() {
+      return window.matchMedia("(pointer: fine) and (min-width: 768px)").matches;
+    }
+
+    function setTabTitle(priceText, arrow) {
+      if (!isDesktopBrowser()) {
+        document.title = "MINIMAXUSDT";
+        return;
+      }
+      const prefix = arrow ? arrow + " " : "";
+      document.title = prefix + priceText + " · MINIMAX";
+    }
+
     function fmtTime(d = new Date()) {
       return d.toLocaleTimeString("zh-CN", { hour12: false });
     }
@@ -324,6 +337,7 @@
 
           priceEl.textContent = text;
 
+          let arrow = "";
           if (lastPrice != null && Number.isFinite(p)) {
             const diff = p - lastPrice;
             const pct = lastPrice ? (diff / lastPrice) * 100 : 0;
@@ -339,6 +353,7 @@
             } else {
               const sign = up ? "+" : "";
               deltaEl.textContent = `${sign}${diff.toFixed(5)}  (${sign}${pct.toFixed(3)}%)`;
+              arrow = up ? "▲" : "▼";
               flash(priceEl);
             }
           } else {
@@ -346,6 +361,7 @@
             deltaEl.classList.remove("up", "down");
           }
 
+          setTabTitle(text, arrow);
           lastPrice = p;
           statusEl.textContent = "Live";
           updatedEl.textContent = fmtTime();
@@ -363,6 +379,7 @@
       deltaEl.textContent = String(err && err.message ? err.message : err);
       deltaEl.classList.remove("up", "down");
       liveDot.className = "dot err";
+      if (isDesktopBrowser()) document.title = "MINIMAXUSDT · offline";
       inFlight = false;
     }
 
