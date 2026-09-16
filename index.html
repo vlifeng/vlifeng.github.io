@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>tutu · Pages</title>
+  <title>MINIMAXUSDT · Live</title>
   <style>
     :root { color-scheme: light dark; }
     * { box-sizing: border-box; }
@@ -28,8 +28,6 @@
       backdrop-filter: blur(10px);
       box-shadow: 0 20px 50px rgba(0,0,0,0.35);
     }
-    h1 { margin: 0 0 0.5rem; font-size: 1.75rem; letter-spacing: -0.02em; }
-    p { margin: 0; line-height: 1.6; color: #b7c3df; }
     .badge {
       display: inline-block;
       margin-bottom: 1rem;
@@ -40,14 +38,82 @@
       color: #bae6fd;
       border: 1px solid #7dd3fc55;
     }
+    h1 { margin: 0 0 0.35rem; font-size: 1.35rem; letter-spacing: -0.02em; }
+    .sub { margin: 0 0 1.25rem; color: #b7c3df; font-size: 0.95rem; }
+    .price {
+      font-variant-numeric: tabular-nums;
+      font-size: clamp(2.2rem, 8vw, 3.2rem);
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      margin: 0.25rem 0;
+    }
+    .price.up { color: #4ade80; }
+    .price.down { color: #f87171; }
+    .meta { margin-top: 0.75rem; color: #93a4c7; font-size: 0.85rem; line-height: 1.5; }
+    code { font-size: 0.8em; color: #bae6fd; }
     a { color: #7dd3fc; }
   </style>
 </head>
 <body>
   <main>
-    <div class="badge">GitHub Pages</div>
-    <h1>你好，这里是 tutu 的站点</h1>
-    <p>由 <a href="https://github.com/vlifeng/vlifeng.github.io">vlifeng/vlifeng.github.io</a> 发布。站点已上线。</p>
+    <div class="badge">Binance Futures · 每秒刷新</div>
+    <h1>MINIMAXUSDT</h1>
+    <p class="sub">免费公开行情，浏览器直接拉币安接口</p>
+    <div id="price" class="price">—</div>
+    <div class="meta">
+      <div>状态：<span id="status">连接中…</span></div>
+      <div>更新：<span id="updated">—</span></div>
+      <div>接口：<code id="endpoint">www.binance.com/fapi/v1/ticker/price</code></div>
+    </div>
   </main>
+  <script>
+    const SYMBOL = "MINIMAXUSDT";
+    // 免费 tick（无需 API Key；CORS 已开）
+    // 官方域名 fapi.binance.com 在部分地区会 451，www.binance.com/fapi 通常可用
+    const URLS = [
+      `https://www.binance.com/fapi/v1/ticker/price?symbol=${SYMBOL}`,
+      `https://fapi.binance.com/fapi/v1/ticker/price?symbol=${SYMBOL}`,
+    ];
+
+    const priceEl = document.getElementById("price");
+    const statusEl = document.getElementById("status");
+    const updatedEl = document.getElementById("updated");
+    const endpointEl = document.getElementById("endpoint");
+    let lastPrice = null;
+    let inFlight = false;
+
+    async function fetchPrice() {
+      if (inFlight) return;
+      inFlight = true;
+      let err;
+      for (const url of URLS) {
+        try {
+          const res = await fetch(url, { cache: "no-store" });
+          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+          const data = await res.json();
+          if (data == null || data.price == null) throw new Error("no price");
+          const p = Number(data.price);
+          priceEl.textContent = Number.isFinite(p) ? p.toFixed(5) : String(data.price);
+          if (lastPrice != null) {
+            priceEl.classList.toggle("up", p > lastPrice);
+            priceEl.classList.toggle("down", p < lastPrice);
+          }
+          lastPrice = p;
+          statusEl.textContent = "正常";
+          updatedEl.textContent = new Date().toLocaleString();
+          endpointEl.textContent = new URL(url).host + "/fapi/v1/ticker/price";
+          inFlight = false;
+          return;
+        } catch (e) {
+          err = e;
+        }
+      }
+      statusEl.textContent = "失败：" + (err && err.message ? err.message : err);
+      inFlight = false;
+    }
+
+    fetchPrice();
+    setInterval(fetchPrice, 1000);
+  </script>
 </body>
 </html>
